@@ -10,7 +10,8 @@ import (
 
 // Task is high-level API under rsync
 type Task struct {
-	rsync *Rsync
+	rsync   *Rsync
+	options RsyncOptions
 
 	state *State
 	log   *Log
@@ -43,6 +44,10 @@ func (t Task) Log() Log {
 	}
 }
 
+func (t Task) GetArguments() []string {
+	return GetArguments(t.options)
+}
+
 // Run starts rsync process with options
 func (t *Task) Run() error {
 	stderr, err := t.rsync.StderrPipe()
@@ -72,9 +77,10 @@ func NewTask(source, destination string, rsyncOptions RsyncOptions) *Task {
 	rsyncOptions.Archive = true
 
 	return &Task{
-		rsync: NewRsync(source, destination, rsyncOptions),
-		state: &State{},
-		log:   &Log{},
+		rsync:   NewRsync(source, destination, rsyncOptions),
+		options: rsyncOptions,
+		state:   &State{},
+		log:     &Log{},
 	}
 }
 

@@ -227,7 +227,7 @@ func (r Rsync) Run() error {
 
 // NewRsync returns task with described options
 func NewRsync(source, destination string, options RsyncOptions) *Rsync {
-	arguments := append(getArguments(options), source, destination)
+	arguments := append(GetArguments(options), source, destination)
 	return &Rsync{
 		Source:      source,
 		Destination: destination,
@@ -235,7 +235,7 @@ func NewRsync(source, destination string, options RsyncOptions) *Rsync {
 	}
 }
 
-func getArguments(options RsyncOptions) []string {
+func GetArguments(options RsyncOptions) []string {
 	arguments := []string{}
 	if options.Verbose {
 		arguments = append(arguments, "--verbose")
