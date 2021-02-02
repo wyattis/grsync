@@ -180,6 +180,15 @@ type RsyncOptions struct {
 	// Chown --chown="", chown on receipt.
 	Chown string
 
+	// --no-OPTION flags.
+	NoOwner      bool
+	NoPerms      bool
+	NoGroup      bool
+	NoDirs       bool
+	NoWholeFile  bool
+	NoBlockingIO bool
+	NoRelative   bool
+
 	// ipv4
 	IPv4 bool
 	// ipv6
@@ -558,6 +567,34 @@ func getArguments(options RsyncOptions) []string {
 
 	if options.Chown != "" {
 		arguments = append(arguments, fmt.Sprintf("--chown=%s", options.Chown))
+	}
+
+	if options.NoDirs {
+		arguments = append(arguments, "--no-dirs")
+	}
+
+	if options.NoBlockingIO {
+		arguments = append(arguments, "--no-blocking-io")
+	}
+
+	if options.NoPerms {
+		arguments = append(arguments, "--no-perms")
+	}
+
+	if options.NoGroup {
+		arguments = append(arguments, "--no-group")
+	}
+
+	if options.NoOwner {
+		arguments = append(arguments, "--no-owner")
+	}
+
+	if options.NoWholeFile {
+		arguments = append(arguments, "--no-whole-file")
+	}
+
+	if options.NoRelative {
+		arguments = append(arguments, "--no-relative")
 	}
 
 	return arguments
