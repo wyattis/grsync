@@ -181,13 +181,7 @@ type RsyncOptions struct {
 	Chown string
 
 	// --no-OPTION flags.
-	NoOwner      bool
-	NoPerms      bool
-	NoGroup      bool
-	NoDirs       bool
-	NoWholeFile  bool
-	NoBlockingIO bool
-	NoRelative   bool
+	No *RsyncOptions
 
 	// ipv4
 	IPv4 bool
@@ -236,365 +230,345 @@ func NewRsync(source, destination string, options RsyncOptions) *Rsync {
 }
 
 func GetArguments(options RsyncOptions) []string {
+	args := GetArgsPrefix(options, "--")
+	if options.No != nil {
+		args = append(args, GetArgsPrefix(*options.No, "--no-")...)
+	}
+	return args
+}
+
+func GetArgsPrefix(options RsyncOptions, prefix string) []string {
 	arguments := []string{}
 	if options.Verbose {
-		arguments = append(arguments, "--verbose")
+		arguments = append(arguments, fmt.Sprintf("%sverbose", prefix))
 	}
 
 	if options.Checksum {
-		arguments = append(arguments, "--checksum")
+		arguments = append(arguments, fmt.Sprintf("%schecksum", prefix))
 	}
 
 	if options.Quiet {
-		arguments = append(arguments, "--quiet")
+		arguments = append(arguments, fmt.Sprintf("%squiet", prefix))
 	}
 
 	if options.Archive {
-		arguments = append(arguments, "--archive")
+		arguments = append(arguments, fmt.Sprintf("%sarchive", prefix))
 	}
 
 	if options.Recursive {
-		arguments = append(arguments, "--recursive")
+		arguments = append(arguments, fmt.Sprintf("%srecursive", prefix))
 	}
 
 	if options.Relative {
-		arguments = append(arguments, "--relative")
+		arguments = append(arguments, fmt.Sprintf("%srelative", prefix))
 	}
 
 	if options.NoImpliedDirs {
-		arguments = append(arguments, "--no-implied-dirs")
+		arguments = append(arguments, fmt.Sprintf("%sno-implied-dirs", prefix))
 	}
 
 	if options.Update {
-		arguments = append(arguments, "--update")
+		arguments = append(arguments, fmt.Sprintf("%supdate", prefix))
 	}
 
 	if options.Inplace {
-		arguments = append(arguments, "--inplace")
+		arguments = append(arguments, fmt.Sprintf("%sinplace", prefix))
 	}
 
 	if options.Append {
-		arguments = append(arguments, "--append")
+		arguments = append(arguments, fmt.Sprintf("%sappend", prefix))
 	}
 
 	if options.AppendVerify {
-		arguments = append(arguments, "--append-verify")
+		arguments = append(arguments, fmt.Sprintf("%sappend-verify", prefix))
 	}
 
 	if options.Dirs {
-		arguments = append(arguments, "--dirs")
+		arguments = append(arguments, fmt.Sprintf("%sdirs", prefix))
 	}
 
 	if options.Links {
-		arguments = append(arguments, "--links")
+		arguments = append(arguments, fmt.Sprintf("%slinks", prefix))
 	}
 
 	if options.CopyLinks {
-		arguments = append(arguments, "--copy-links")
+		arguments = append(arguments, fmt.Sprintf("%scopy-links", prefix))
 	}
 
 	if options.CopyUnsafeLinks {
-		arguments = append(arguments, "--copy-unsafe-links")
+		arguments = append(arguments, fmt.Sprintf("%scopy-unsafe-links", prefix))
 	}
 
 	if options.SafeLinks {
-		arguments = append(arguments, "--safe-links")
+		arguments = append(arguments, fmt.Sprintf("%ssafe-links", prefix))
 	}
 
 	if options.CopyDirLinks {
-		arguments = append(arguments, "--copy-dir-links")
+		arguments = append(arguments, fmt.Sprintf("%scopy-dir-links", prefix))
 	}
 
 	if options.KeepDirLinks {
-		arguments = append(arguments, "--keep-dir-links")
+		arguments = append(arguments, fmt.Sprintf("%skeep-dir-links", prefix))
 	}
 
 	if options.HardLinks {
-		arguments = append(arguments, "--hard-links")
+		arguments = append(arguments, fmt.Sprintf("%shard-links", prefix))
 	}
 
 	if options.Perms {
-		arguments = append(arguments, "--perms")
+		arguments = append(arguments, fmt.Sprintf("%sperms", prefix))
 	}
 
 	if options.Executability {
-		arguments = append(arguments, "--executability")
+		arguments = append(arguments, fmt.Sprintf("%sexecutability", prefix))
 	}
 
 	if options.ACLs {
-		arguments = append(arguments, "--acls")
+		arguments = append(arguments, fmt.Sprintf("%sacls", prefix))
 	}
 
 	if options.XAttrs {
-		arguments = append(arguments, "--xattrs")
+		arguments = append(arguments, fmt.Sprintf("%sxattrs", prefix))
 	}
 
 	if options.Owner {
-		arguments = append(arguments, "--owner")
+		arguments = append(arguments, fmt.Sprintf("%sowner", prefix))
 	}
 
 	if options.Group {
-		arguments = append(arguments, "--group")
+		arguments = append(arguments, fmt.Sprintf("%sgroup", prefix))
 	}
 
 	if options.Devices {
-		arguments = append(arguments, "--devices")
+		arguments = append(arguments, fmt.Sprintf("%sdevices", prefix))
 	}
 
 	if options.Specials {
-		arguments = append(arguments, "--specials")
+		arguments = append(arguments, fmt.Sprintf("%sspecials", prefix))
 	}
 
 	if options.Times {
-		arguments = append(arguments, "--times")
+		arguments = append(arguments, fmt.Sprintf("%stimes", prefix))
 	}
 
 	if options.OmitDirTimes {
-		arguments = append(arguments, "--omit-dir-times")
+		arguments = append(arguments, fmt.Sprintf("%somit-dir-times", prefix))
 	}
 
 	if options.Super {
-		arguments = append(arguments, "--super")
+		arguments = append(arguments, fmt.Sprintf("%ssuper", prefix))
 	}
 
 	if options.FakeSuper {
-		arguments = append(arguments, "--fake-super")
+		arguments = append(arguments, fmt.Sprintf("%sfake-super", prefix))
 	}
 
 	if options.Sparse {
-		arguments = append(arguments, "--sparse")
+		arguments = append(arguments, fmt.Sprintf("%ssparse", prefix))
 	}
 
 	if options.DryRun {
-		arguments = append(arguments, "--dry-run")
+		arguments = append(arguments, fmt.Sprintf("%sdry-run", prefix))
 	}
 
 	if options.WholeFile {
-		arguments = append(arguments, "--whole-file")
+		arguments = append(arguments, fmt.Sprintf("%swhole-file", prefix))
 	}
 
 	if options.OneFileSystem {
-		arguments = append(arguments, "--one-file-system")
+		arguments = append(arguments, fmt.Sprintf("%sone-file-system", prefix))
 	}
 
 	if options.BlockSize > 0 {
-		arguments = append(arguments, "--block-size", strconv.Itoa(options.BlockSize))
+		arguments = append(arguments, fmt.Sprintf("%sblock-size", prefix), strconv.Itoa(options.BlockSize))
 	}
 
 	if options.Rsh != "" {
-		arguments = append(arguments, "--rsh", options.Rsh)
+		arguments = append(arguments, fmt.Sprintf("%srsh", prefix), options.Rsh)
 	}
 
 	if options.RsyncProgramm != "" {
-		arguments = append(arguments, "--rsync-programm", options.RsyncProgramm)
+		arguments = append(arguments, fmt.Sprintf("%srsync-programm", prefix), options.RsyncProgramm)
 	}
 
 	if options.Existing {
-		arguments = append(arguments, "--existing")
+		arguments = append(arguments, fmt.Sprintf("%sexisting", prefix))
 	}
 
 	if options.IgnoreExisting {
-		arguments = append(arguments, "--ignore-existing")
+		arguments = append(arguments, fmt.Sprintf("%signore-existing", prefix))
 	}
 
 	if options.RemoveSourceFiles {
-		arguments = append(arguments, "--remove-source-files")
+		arguments = append(arguments, fmt.Sprintf("%sremove-source-files", prefix))
 	}
 
 	if options.Delete {
-		arguments = append(arguments, "--delete")
+		arguments = append(arguments, fmt.Sprintf("%sdelete", prefix))
 	}
 
 	if options.DeleteBefore {
-		arguments = append(arguments, "--delete-before")
+		arguments = append(arguments, fmt.Sprintf("%sdelete-before", prefix))
 	}
 
 	if options.DeleteDuring {
-		arguments = append(arguments, "--delete-during")
+		arguments = append(arguments, fmt.Sprintf("%sdelete-during", prefix))
 	}
 
 	if options.DeleteDelay {
-		arguments = append(arguments, "--delete-delay")
+		arguments = append(arguments, fmt.Sprintf("%sdelete-delay", prefix))
 	}
 
 	if options.DeleteAfter {
-		arguments = append(arguments, "--delete-after")
+		arguments = append(arguments, fmt.Sprintf("%sdelete-after", prefix))
 	}
 
 	if options.DeleteExcluded {
-		arguments = append(arguments, "--delete-excluded")
+		arguments = append(arguments, fmt.Sprintf("%sdelete-excluded", prefix))
 	}
 
 	if options.IgnoreErrors {
-		arguments = append(arguments, "--ignore-errors")
+		arguments = append(arguments, fmt.Sprintf("%signore-errors", prefix))
 	}
 
 	if options.Force {
-		arguments = append(arguments, "--force")
+		arguments = append(arguments, fmt.Sprintf("%sforce", prefix))
 	}
 
 	if options.MaxDelete > 0 {
-		arguments = append(arguments, "--max-delete", strconv.Itoa(options.MaxDelete))
+		arguments = append(arguments, fmt.Sprintf("%smax-delete", prefix), strconv.Itoa(options.MaxDelete))
 	}
 
 	if options.MaxSize > 0 {
-		arguments = append(arguments, "--max-size", strconv.Itoa(options.MaxSize))
+		arguments = append(arguments, fmt.Sprintf("%smax-size", prefix), strconv.Itoa(options.MaxSize))
 	}
 
 	if options.MinSize > 0 {
-		arguments = append(arguments, "--min-size", strconv.Itoa(options.MinSize))
+		arguments = append(arguments, fmt.Sprintf("%smin-size", prefix), strconv.Itoa(options.MinSize))
 	}
 
 	if options.Partial {
-		arguments = append(arguments, "--partial")
+		arguments = append(arguments, fmt.Sprintf("%spartial", prefix))
 	}
 
 	if options.PartialDir != "" {
-		arguments = append(arguments, "--partial-dir", options.PartialDir)
+		arguments = append(arguments, fmt.Sprintf("%spartial-dir", prefix), options.PartialDir)
 	}
 
 	if options.DelayUpdates {
-		arguments = append(arguments, "--delay-updates")
+		arguments = append(arguments, fmt.Sprintf("%sdelay-updates", prefix))
 	}
 
 	if options.PruneEmptyDirs {
-		arguments = append(arguments, "--prune-empty-dirs")
+		arguments = append(arguments, fmt.Sprintf("%sprune-empty-dirs", prefix))
 	}
 
 	if options.NumericIDs {
-		arguments = append(arguments, "--numeric-ids")
+		arguments = append(arguments, fmt.Sprintf("%snumeric-ids", prefix))
 	}
 
 	if options.Timeout > 0 {
-		arguments = append(arguments, "--timeout", strconv.Itoa(options.Timeout))
+		arguments = append(arguments, fmt.Sprintf("%stimeout", prefix), strconv.Itoa(options.Timeout))
 	}
 
 	if options.Contimeout > 0 {
-		arguments = append(arguments, "--contimeout", strconv.Itoa(options.Contimeout))
+		arguments = append(arguments, fmt.Sprintf("%scontimeout", prefix), strconv.Itoa(options.Contimeout))
 	}
 
 	if options.IgnoreTimes {
-		arguments = append(arguments, "--ignore-times")
+		arguments = append(arguments, fmt.Sprintf("%signore-times", prefix))
 	}
 
 	if options.SizeOnly {
-		arguments = append(arguments, "--size-only")
+		arguments = append(arguments, fmt.Sprintf("%ssize-only", prefix))
 	}
 
 	if options.ModifyWindow {
-		arguments = append(arguments, "--modify-window")
+		arguments = append(arguments, fmt.Sprintf("%smodify-window", prefix))
 	}
 
 	if options.TempDir != "" {
-		arguments = append(arguments, "--temp-dir", options.TempDir)
+		arguments = append(arguments, fmt.Sprintf("%stemp-dir", prefix), options.TempDir)
 	}
 
 	if options.Fuzzy {
-		arguments = append(arguments, "--fuzzy")
+		arguments = append(arguments, fmt.Sprintf("%sfuzzy", prefix))
 	}
 
 	if options.CompareDest != "" {
-		arguments = append(arguments, "--compare-dest", options.CompareDest)
+		arguments = append(arguments, fmt.Sprintf("%scompare-dest", prefix), options.CompareDest)
 	}
 
 	if options.CopyDest != "" {
-		arguments = append(arguments, "--copy-dest", options.CopyDest)
+		arguments = append(arguments, fmt.Sprintf("%scopy-dest", prefix), options.CopyDest)
 	}
 
 	if options.LinkDest != "" {
-		arguments = append(arguments, "--link-dest", options.LinkDest)
+		arguments = append(arguments, fmt.Sprintf("%slink-dest", prefix), options.LinkDest)
 	}
 
 	if options.Compress {
-		arguments = append(arguments, "--compress")
+		arguments = append(arguments, fmt.Sprintf("%scompress", prefix))
 	}
 
 	if options.CompressLevel > 0 {
-		arguments = append(arguments, "--compress-level", strconv.Itoa(options.CompressLevel))
+		arguments = append(arguments, fmt.Sprintf("%scompress-level", prefix), strconv.Itoa(options.CompressLevel))
 	}
 
 	if len(options.SkipCompress) > 0 {
-		arguments = append(arguments, "--skip-compress", strings.Join(options.SkipCompress, ","))
+		arguments = append(arguments, fmt.Sprintf("%sskip-compress", prefix), strings.Join(options.SkipCompress, ","))
 	}
 
 	if options.CVSExclude {
-		arguments = append(arguments, "--cvs-exclude")
+		arguments = append(arguments, fmt.Sprintf("%scvs-exclude", prefix))
 	}
 
 	if options.Stats {
-		arguments = append(arguments, "--stats")
+		arguments = append(arguments, fmt.Sprintf("%sstats", prefix))
 	}
 
 	if options.HumanReadable {
-		arguments = append(arguments, "--human-readable")
+		arguments = append(arguments, fmt.Sprintf("%shuman-readable", prefix))
 	}
 
 	if options.Progress {
-		arguments = append(arguments, "--progress")
+		arguments = append(arguments, fmt.Sprintf("%sprogress", prefix))
 	}
 
 	if options.IPv4 {
-		arguments = append(arguments, "--ipv4")
+		arguments = append(arguments, fmt.Sprintf("%sipv4", prefix))
 	}
 
 	if options.IPv6 {
-		arguments = append(arguments, "--ipv6")
+		arguments = append(arguments, fmt.Sprintf("%sipv6", prefix))
 	}
 
 	if options.Info != "" {
-		arguments = append(arguments, "--info", options.Info)
+		arguments = append(arguments, fmt.Sprintf("%sinfo", prefix), options.Info)
 	}
 
 	if options.OutFormat {
-		arguments = append(arguments, "--out-format=\"%n\"")
+		arguments = append(arguments, fmt.Sprintf("%sout-format=\"%%n\"", prefix))
 	}
 
 	if len(options.Exclude) > 0 {
 		for _, pattern := range options.Exclude {
-			arguments = append(arguments, fmt.Sprintf("--exclude=%s", pattern))
+			arguments = append(arguments, fmt.Sprintf("%sexclude=%s", prefix, pattern))
 		}
 	}
 
 	if len(options.Include) > 0 {
 		for _, pattern := range options.Include {
-			arguments = append(arguments, fmt.Sprintf("--include=%s", pattern))
+			arguments = append(arguments, fmt.Sprintf("%sinclude=%s", prefix, pattern))
 		}
 	}
 
 	if options.Filter != "" {
-		arguments = append(arguments, fmt.Sprintf("--filter=%s", options.Filter))
+		arguments = append(arguments, fmt.Sprintf("%sfilter=%s", prefix, options.Filter))
 	}
 
 	if options.Chown != "" {
-		arguments = append(arguments, fmt.Sprintf("--chown=%s", options.Chown))
-	}
-
-	if options.NoDirs {
-		arguments = append(arguments, "--no-dirs")
-	}
-
-	if options.NoBlockingIO {
-		arguments = append(arguments, "--no-blocking-io")
-	}
-
-	if options.NoPerms {
-		arguments = append(arguments, "--no-perms")
-	}
-
-	if options.NoGroup {
-		arguments = append(arguments, "--no-group")
-	}
-
-	if options.NoOwner {
-		arguments = append(arguments, "--no-owner")
-	}
-
-	if options.NoWholeFile {
-		arguments = append(arguments, "--no-whole-file")
-	}
-
-	if options.NoRelative {
-		arguments = append(arguments, "--no-relative")
+		arguments = append(arguments, fmt.Sprintf("%schown=%s", prefix, options.Chown))
 	}
 
 	return arguments
